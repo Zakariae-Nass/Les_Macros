@@ -12,43 +12,6 @@
 
 
 /*
-    Le Macro Cree_Fenetre Pour alloue la memoire pour un fenetre
-    Les Entres : 
-                    Rien 
-    Les Sorties :
-                    Pointeur De Type Fenetre
-*/
-Fenetre* Cree_Fenetre()
-{
-    /*
-       Allocation de memoire
-    */
-    Fenetre* fen=(Fenetre*)malloc(sizeof(Fenetre));
-    /*
-      Test d'existance
-    */
-    if(!fen)
-    {
-        printf("Erreur dans la fenetre");
-        exit(-1);
-    }
-    /*
-      Test d'existance
-    */
-    if(!fen->Wind)
-    {
-        printf("Erruer dans la fenetre");
-        exit(-1);
-    }
-    /*
-      Retourne de la Fenetre
-    */
-    return (Fenetre*)fen;
-}
-
-
-
-/*
     Le Macro Afficher_Fenetre Pour Afficher sur l'ecran un Fenetre
     Les Entres : 
                     Pointeur De Type Fenetre 
@@ -94,22 +57,18 @@ void Afficher_Fenetre(Fenetre* fen)
     Les Sorties :
                     Rien
 */
-void Set_Window_Type(Fenetre* fen,gboolean type)
+Fenetre* Create_Fenetre(gboolean type)
 {
+    /*
+       Allocation de memoire
+    */
+    Fenetre* fen=(Fenetre*)malloc(sizeof(Fenetre));
     /*
       Test d'existance
     */
     if(!fen)
     {
         printf("Erreur dans la fenetre");
-        exit(-1);
-    }
-    /*
-      Test d'existance
-    */
-    if(!fen->Wind)
-    {
-        printf("Erruer dans la fenetre");
         exit(-1);
     }
     /*
@@ -123,6 +82,7 @@ void Set_Window_Type(Fenetre* fen,gboolean type)
       Recuperation de type dans la structure
     */
     fen->Type=type;
+    return(Fenetre*)fen;
 }
 
 
@@ -130,7 +90,7 @@ void Set_Window_Type(Fenetre* fen,gboolean type)
 
 
 /*
-    Le Macro Set_Window_Decorate Pour effectue la barre la Fenetre ou non 
+    Le Macro Set_Fenetre_Decorate Pour effectue la barre la Fenetre ou non 
     Types       :   *avec Headbar(TRUE)
                     *sans Headbar(FALSE)
     Les Entres  : 
@@ -139,7 +99,7 @@ void Set_Window_Type(Fenetre* fen,gboolean type)
     Les Sorties :
                     Rien
 */
-void Set_Window_Decorate(Fenetre *fen,gboolean Headbar)
+void Set_Fenetre_Decorate(Fenetre *fen,gboolean Headbar)
 {
     /*
       Test d'existance
@@ -481,13 +441,13 @@ void Fenetre_Set_BackGround_Color(Fenetre *F_Ptr,char *ColorBg)
     /*
         Affecter Le Color A Notre Objet Initailiser 
     */
-    //gdk_color_parse(ColorBg, &Color); gdk_rgba_parse();gdk_color_parse()
+    gdk_color_parse(ColorBg, &Color);
 
     /*
         Affecter Le Color Au Window
     */
 
-    //gtk_widget_modify_bg(F_Ptr->Wind, GTK_STATE_NORMAL, &Color);
+    gtk_widget_modify_bg(F_Ptr->Wind, GTK_STATE_NORMAL, &Color);
 
     F_Ptr->ColorBg = ColorBg;
 
@@ -653,22 +613,19 @@ gchar* get_fenetre_title(Fenetre *fen)
  * Entrées:-fen Pointeur vers la structure Fenetre.
  *  	  -new_title Nouvelle valeur pour le champ Title.
  *************************************************************/
-void set_fenetre_title(Fenetre *fen, const gchar *new_title)
+void set_fenetre_title(Fenetre *fen,gchar *new_title)
 {
     // Vérifie si le pointeur vers la structure Fenetre est NULL
-    if (fen == NULL)
+    if (!fen || !fen->Wind)
     {
         // Affiche un message d'avertissement dans la console si la structure est invalide
-        g_warning("set_fenetre_title: Structure Fenetre invalide (NULL).");
+        printf("set_fenetre_title: Structure Fenetre invalide (NULL).");
         exit(-1);  // quitte immédiatement car il n'y a rien à modifier
     }
-
-    // Libère la mémoire de l'ancienne valeur du champ Title si elle existe
-    //if (fen->Title)        g_free(fen->Title);
     // Duplique la nouvelle chaîne pour garantir qu'elle est indépendante de l'entrée
     fen->Title = g_strdup(new_title);
+    gtk_window_set_title(GTK_WINDOW(fen->Wind),fen->Title);
 }//Fin de la fonction
-
 
 
 
@@ -696,15 +653,15 @@ gboolean is_title_empty(const Fenetre *fen)
  *
  * Entrées: fen Pointeur vers la structure Fenetre.
  */
-void update_fenetre_title(Fenetre *fen)
-{
-    if (!fen || !fen->Wind || !fen->Title)
-    {
-        g_warning("update_fenetre_title: Paramètres invalides ou champ Title non initialisé.");
-        return;
-    }
+// void update_fenetre_title(Fenetre *fen)
+// {
+//     if (!fen || !fen->Wind || !fen->Title)
+//     {
+//         g_warning("update_fenetre_title: Paramètres invalides ou champ Title non initialisé.");
+//         return;
+//     }
 
-    // Met à jour le titre affiché dans la fenêtre GTK
-    gtk_window_set_title(GTK_WINDOW(fen->Wind), fen->Title);
+//     // Met à jour le titre affiché dans la fenêtre GTK
+//     gtk_window_set_title(GTK_WINDOW(fen->Wind), fen->Title);
 
-}
+// }

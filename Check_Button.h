@@ -3,82 +3,6 @@
 
 
 /*
-  La fonction Set_CheckButton_Label permet de modifier le texte de la check button
-  Les Entrees: -pointure sur le check button
-               -le texte a afficher
-  Les Sortis : -1 si la modification est effectue
-               -0 si le check button n'exist pas
-*/
-int Set_CheckButton_In_Box(Check_Button* CB,GtkWidget* Box,gboolean expand,gboolean fill,guint padding)
-{
-    /*
-      Test d'existance
-    */
-    if(!CB)
-    {
-        printf("Check Button n'exist pas");
-        return(int)-1;
-    }
-    /*
-      Test d'existance
-    */
-    if(!Box)
-    {
-      printf("Le container Box n'exist pas");
-      return(int)0;
-    }
-    /*
-      Affectation du parent
-    */
-    CB->Parent=Box;
-    /*
-      Ajouter le check button dans le container
-    */
-    gtk_box_pack_start(Gtk_Box(Box),CB->Check,expand,fill,padding);
-    return(int)1;
-}
-
-
-
-/*
-  La fonction Set_CheckButton_In_Fixed permet d'ajouter un check button dans un container de type Fixed
-  Les Entrees: -pointure sur le check button
-               -pointure sur le container Fixed
-               -les coordonnees de la position du check button dans le container
-  Les Sortis : -1 si l'ajout est effectue
-               -0 si le container n'exist pas
-               -(-1) si le check button n'exist pas
-*/
-int Set_CheckButton_In_Fixed(Check_Button* CB,GtkWidget* Fixed)
-{
-    /*
-      Test d'existance
-    */
-    if(!CB)
-    {
-        printf("Check Button n'exist pas");
-        return(int)-1;
-    }
-    /*
-      Test d'existance
-    */
-    if(!Fixed)
-    {
-      printf("Le container Fixed n'exist pas");
-      return(int)0;
-    }
-    /*
-      Affectation du parent
-    */
-    CB->Parent=Fixed;
-    /*
-      Ajouter le check button dans le container
-    */
-    gtk_fixed_put(GTK_FIXED(Fixed),CB->Check,CB->position.X,CB->position.Y);
-    return(int)1;
-}
-
-/*
   La fonction Set_CheckButton_In_Grid permet d'ajouter un check button dans un container de type Grid
   Les Entrees: -pointure sur le check button
                -pointure sur le container Grid
@@ -131,7 +55,8 @@ int Set_CheckButton_Lable(Check_Button* CB,gchar* label)
   */
   if(!CB)
   {
-    printf("Check Button n'exist pas");
+    printf("\nMacro :Set_CheckButton_Lable\n");
+    printf("-->Erreur d'existence de Check Button");
     return(int)0;
   }
   /*
@@ -158,7 +83,8 @@ int Set_CheckButton_State(Check_Button* CB,gboolean state)
   */
   if(!CB)
   {
-    printf("Check Button n'exist pas");
+    printf("\nMacro :Set_CheckButton_State\n");
+    printf("-->Erreur d'existence de Check Button");
     return(int)0;
   }
   /*
@@ -184,7 +110,8 @@ int Set_CheckButton_Active(Check_Button* CB,gboolean active)
   */
   if(!CB)
   {
-    printf("Check Button n'exist pas");
+    printf("\nMacro :Set_CheckButton_Active\n");
+    printf("-->Erreur d'existence de Check Button");
     return(int)0;
   }
   /*
@@ -210,7 +137,8 @@ int Set_CheckButton_Position(Check_Button* CB,Position pos)
   */
   if(!CB)
   {
-    printf("Check Button n'exist pas");
+    printf("\nMacro :Set_CheckButton_Position\n");
+    printf("-->Erreur d'existence de Check Button");
     return(int)0;
   }
   /*
@@ -236,7 +164,8 @@ int Set_CheckButton_ID(Check_Button* CB,gchar* ID)
   */
   if(!CB)
   {
-    printf("Check Button n'exist pas");
+    printf("\nMacro :Set_CheckButton_ID\n");
+    printf("-->Erreur d'existence de Check Button");
     return(int)0;
   }
   /*
@@ -254,11 +183,11 @@ int Set_CheckButton_ID(Check_Button* CB,gchar* ID)
   Les Sortis : -le texte de la check button
                -NULL si le check button n'exist pas
 */
-gboolean Get_Etat_CheckButton(CheckButton *cb) 
+gboolean Get_Etat_CheckButton(Check_Button *cb) 
 {
     // Vérifier si le pointeur est NULL
-    if(cb->check)
-        return(gboolean)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cb->check));
+    if(cb->Check)
+        return(gboolean)gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cb->Check));
     return(gboolean)FALSE;
 }
 
@@ -282,12 +211,13 @@ Check_Button* Create_Check_Button(gchar* label,gboolean state,gboolean active,Po
     */
     if(!ch_button)
     {
-        printf("Erreur d'allocation de memoire pour le check button");
-        exit(-1);
+      printf("\nMacro :Create_Check_Button\n");
+      printf("-->Erreur d'allocation de memoire pour le check button");
+      exit(-1);
     }
     
     // Creation du check button
-    ch_button=gtk_check_button_new();
+    ch_button->Check=gtk_check_button_new();
 
     /*
       Affectation des parametres
@@ -304,14 +234,53 @@ Check_Button* Create_Check_Button(gchar* label,gboolean state,gboolean active,Po
 }
 
 
+
+Check_Button* Create_Check_Button_With_Mnemonique(gchar* label)
+{
+    Check_Button* ch_button;
+    // Allocation de memoire pour le check button
+    ch_button=(Check_Button*)malloc(sizeof(Check_Button));
+    /*
+      Test d'allocation
+    */
+    if(!ch_button)
+    {
+      printf("\nMacro :Create_Check_Button_With_Mnemonique\n");
+      printf("-->Erreur d'allocation de memoire pour le check button");
+      exit(-1);
+    }
+    ch_button->Label=g_strdup(label);
+
+    ch_button->Check=gtk_check_button_new_with_mnemonic(label);
+    return(Check_Button*)ch_button;
+}
+
+
+
+Check_Button* Initialise_Check_Button()
+{
+  //Allocation de memoire pour la structure check_button
+  Check_Button* CB=(Check_Button*)malloc(sizeof(Check_Button));
+  //Test d'allocation
+  if (!CB)
+  {
+    printf("\nMacro :Initialise_Check_Button\n");
+    printf("-->Erreur d'allocation pout la structure check_button");
+    exit(-1);
+  }
+  //Creation du check button
+  CB->Check=gtk_check_button_new();
+  return(Check_Button*)CB;
+}
+
 /*
-  La fonction Unique_ID permet de verifier si l'ID de check button est unique
+  La fonction Unique_CheckButton_ID permet de verifier si l'ID de check button est unique
   Les Entrees: -pointure sur la liste des check buttons
                -l'ID de check button a verifier
   Les Sortis : -1 si l'ID est unique
                -0 si l'ID n'est pas unique
 */
-int Unique_ID(Check_Button_Liste* liste,gchar* ID)
+int Unique_CheckButton_ID(Check_Button_Liste* liste,gchar* ID)
 {
     
     Check_Button_Liste* tmp;
@@ -353,24 +322,27 @@ Check_Button_Liste* Add_Check_Button(Check_Button_Liste* liste,Check_Button* CB)
     */
     if(!tmp)
     {
-        printf("Erreur d'allocation de memoire pour la liste des check buttons");
-        exit(-1);
+      printf("\nMacro :Add_Check_Button\n");
+      printf("Erreur d'allocation de memoire pour la liste des check buttons");
+      exit(-1);
     }
     /*
       Test d'existance
     */
     if(!CB)
     {
-        printf("Check Button n'exist pas");
-        return(Check_Button_Liste*)liste;
+      printf("\nMacro :Add_Check_Button\n");
+      printf("Check Button n'exist pas");
+      return(Check_Button_Liste*)liste;
     }
     /*
       Test d'unicite de l'ID
     */
-    if(!Unique_ID(liste,CB->Id))
+    if(!Unique_CheckButton_ID(liste,CB->Id))
     {
-        printf("L'ID de check button n'est pas unique");
-        return(Check_Button_Liste*)liste;
+      printf("\nMacro :Add_Check_Button\n");
+      printf("L'ID de check button n'est pas unique");
+      return(Check_Button_Liste*)liste;
     }
     /*
       Ajout du check button
